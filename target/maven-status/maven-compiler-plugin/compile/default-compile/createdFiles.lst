@@ -1,0 +1,8 @@
+org\measure\platform\agent\restapi\RemoteMeasureExecutionResource.class
+org\measure\platform\agent\repository\api\IMeasureCatalogueService.class
+org\measure\platform\agent\serviceregistrator\PlatformRegistrator.class
+org\measure\platform\agent\smmengine\impl\RemoteExecutionService.class
+org\measure\platform\agent\MeasureAgentApp.class
+org\measure\platform\agent\repository\impl\MeasureCatalogueService.class
+org\measure\platform\agent\repository\impl\UnzipUtility.class
+org\measure\platform\agent\smmengine\api\IRemoteExecutionService.class
