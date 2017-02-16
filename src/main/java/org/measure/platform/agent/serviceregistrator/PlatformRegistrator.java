@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 public class PlatformRegistrator implements SchedulingConfigurer {
 
-	private static final String  REGISTRATION_API = "/measure/api/remote-measure/registration";
+	private static final String  REGISTRATION_API = "/api/remote-measure/registration";
 	@Value("${measure.server.adress}")
 	private String serverAdress;
 
