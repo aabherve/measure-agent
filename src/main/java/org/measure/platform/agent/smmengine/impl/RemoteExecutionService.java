@@ -2,6 +2,7 @@ package org.measure.platform.agent.smmengine.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,10 @@ public class RemoteExecutionService implements IRemoteExecutionService {
 
 		try {
 			if (measure != null) {
-				measure.setProperties(measureData.getProperties());
+				
+				for(Entry<String,String> entry : measureData.getProperties().entrySet()){
+					measure.getProperties().put(entry.getKey(), entry.getValue());
+				}
 				
 				Date start = new Date();
 				List<IMeasurement> measurements = measure.getMeasurement();
@@ -47,7 +51,13 @@ public class RemoteExecutionService implements IRemoteExecutionService {
 				executionLog.setMesurement(measurements);
 				executionLog.setSuccess(true);
 
-				result.setUpdatedProperties(measure.getUpdatedProperties());
+				for(Entry<String,String> entry : measureData.getProperties().entrySet()){
+					if(!measure.getProperties().get(entry.getKey()).equals(entry.getValue())){
+						result.getUpdatedProperties().put(entry.getKey(), measure.getProperties().get(entry.getKey()));
+					}
+				}
+				
+				
 			}else{
 				executionLog.setExceptionMessage("Measure Unknown on Agent");
 				executionLog.setSuccess(false);
