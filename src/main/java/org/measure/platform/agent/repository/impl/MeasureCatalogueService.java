@@ -48,42 +48,37 @@ public class MeasureCatalogueService implements IMeasureCatalogueService {
 	}
 
 	@Override
-	public IDirectMeasure getMeasureImplementation(String measureId) {
+	public IDirectMeasure getMeasureImplementation(String measureId) throws Exception {
 		Path repository = new File(measurePath).toPath();
 		Path measureImpl = repository.resolve(measureId);
 
 		List<URL> jars;
-		try {
-			URL measureJar = getJars(measureImpl).get(0);
-			jars = getJars(measureImpl.resolve("lib"));
-			jars.add(measureJar);
+		
+		URL measureJar = getJars(measureImpl).get(0);
+		jars = getJars(measureImpl.resolve("lib"));
+		jars.add(measureJar);
 
-			try (URLClassLoader loader = new URLClassLoader(jars.toArray(new URL[jars.size()]),
-					IMeasure.class.getClassLoader())) {
-				IMeasure result = null;
-				for (URL jar : jars) {
-					JarInputStream jarStream = new JarInputStream(new FileInputStream(new File(jar.getFile())));
-					for (JarEntry jarEntry = jarStream.getNextJarEntry(); jarEntry != null; jarEntry = jarStream
-							.getNextJarEntry()) {
-						if (jarEntry.getName().endsWith(".class")) { //$NON-NLS-1$
-							String metaclassNamespace = getNamespace(jarEntry.getName());
-							Class<?> metaclass = loader.loadClass(metaclassNamespace);
+		
+		try (URLClassLoader loader = new URLClassLoader(jars.toArray(new URL[jars.size()]),
+				IMeasure.class.getClassLoader())) {
+			IMeasure result = null;
+			for (URL jar : jars) {
+				JarInputStream jarStream = new JarInputStream(new FileInputStream(new File(jar.getFile())));
+				for (JarEntry jarEntry = jarStream.getNextJarEntry(); jarEntry != null; jarEntry = jarStream.getNextJarEntry()) {
+					if (jarEntry.getName().endsWith(".class")) { //$NON-NLS-1$
+						String metaclassNamespace = getNamespace(jarEntry.getName());
+						Class<?> metaclass = loader.loadClass(metaclassNamespace);
 
-							if (IMeasure.class.isAssignableFrom(metaclass)) {
-								result = (IMeasure) metaclass.newInstance();
-							}
+						if (IMeasure.class.isAssignableFrom(metaclass)) {
+							result = (IMeasure) metaclass.newInstance();
 						}
 					}
 				}
-				return (IDirectMeasure) result;
-			} catch (Exception e) {
-				log.error(e.getLocalizedMessage());
 			}
-		} catch (MalformedURLException e) {
-			log.error(e.getLocalizedMessage());
-		}
 
-		return null;
+			return (IDirectMeasure) result;
+		}
+		
 	}
 
 	private String getNamespace(String jarEntryName) {

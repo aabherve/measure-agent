@@ -14,6 +14,6 @@ public interface IMeasureCatalogueService {
 	
 	public SMMMeasure getMeasure(String measureId);
 	
-	public IDirectMeasure getMeasureImplementation(String measureId);
+	public IDirectMeasure getMeasureImplementation(String measureId) throws Exception;
 
 }
